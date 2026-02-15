@@ -60,8 +60,6 @@ function repoCard(repo, featuredSet) {
 
   const badge = repo.archived
     ? "Archived"
-    : repo.fork
-    ? "Fork"
     : isTemplate
     ? "Template"
     : isFeatured
@@ -70,25 +68,36 @@ function repoCard(repo, featuredSet) {
 
   const safeDesc = (repo.description || "").trim() || "No description. (Still vibes.)";
 
+  // Thumbnail “screenshot”: GitHub’s OpenGraph preview image (no auth required).
+  // Format: https://opengraph.githubassets.com/<cache-buster>/<owner>/<repo>
+  const ogUrl = `https://opengraph.githubassets.com/${encodeURIComponent(repo.pushed_at || "v1")}/${OWNER}/${repo.name}`;
+
   const tags = [
     repo.language ? `<span class="tag">${repo.language}</span>` : "",
     repo.license?.spdx_id && repo.license.spdx_id !== "NOASSERTION" ? `<span class="tag">${repo.license.spdx_id}</span>` : "",
     repo.stargazers_count ? `<span class="tag">★ ${fmtNumber(repo.stargazers_count)}</span>` : "",
-    repo.forks_count ? `<span class="tag">⎇ ${fmtNumber(repo.forks_count)}</span>` : "",
     ...topics.map((t) => `<span class="tag">${t}</span>`),
   ]
     .filter(Boolean)
     .slice(0, 6)
     .join(" ");
 
+  // Make “Site/Homepage” the primary CTA when available.
+  const primaryCtaUrl = pagesUrl || repo.homepage || repo.html_url;
+  const primaryCtaLabel = pagesUrl ? "Visit site" : repo.homepage ? "Visit homepage" : "Open repo";
+
   const actions = [
-    `<a class="action primary" href="${repo.html_url}" target="_blank" rel="noreferrer">Repo</a>`,
-    pagesUrl ? `<a class="action" href="${pagesUrl}" target="_blank" rel="noreferrer">Site</a>` : "",
-    repo.homepage ? `<a class="action" href="${repo.homepage}" target="_blank" rel="noreferrer">Homepage</a>` : "",
+    `<a class="action primary" href="${primaryCtaUrl}" target="_blank" rel="noreferrer">${primaryCtaLabel}</a>`,
+    primaryCtaUrl !== repo.html_url
+      ? `<a class="action" href="${repo.html_url}" target="_blank" rel="noreferrer">Repo</a>`
+      : "",
   ].filter(Boolean).join("");
 
   return `
     <article class="glassCard card" data-name="${repo.name.toLowerCase()}" data-featured="${isFeatured}" data-template="${isTemplate}">
+      <a class="thumb" href="${primaryCtaUrl}" target="_blank" rel="noreferrer" aria-label="Open ${repo.name}">
+        <img src="${ogUrl}" alt="${repo.name} preview" loading="lazy" decoding="async" />
+      </a>
       <div class="cardHead">
         <div>
           <div class="repoName">${repo.name}</div>
@@ -203,6 +212,7 @@ async function loadRepos() {
 
   grid.innerHTML = allRepos
     .filter((r) => !r.private)
+    .filter((r) => !r.fork) // hide forks (e.g., upstream OpenClaw forks)
     .map((r) => repoCard(r, featuredSet))
     .join("");
 
