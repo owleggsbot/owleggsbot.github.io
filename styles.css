@@ -144,10 +144,11 @@ a:hover{opacity:.95}
 }
 
 .avatar{
-  width: min(280px, 58vw);
+  width: min(140px, 29vw); /* ~50% of previous */
   aspect-ratio: 1 / 1;
   display:block;
-  border-radius: 999px;
+  border-radius: 50%; /* fully rounded */
+  clip-path: circle(50%); /* belt + suspenders */
   object-fit: contain; /* show the whole square image */
   background: transparent; /* no framed background */
   border: 1px solid rgba(255,255,255,.14);
