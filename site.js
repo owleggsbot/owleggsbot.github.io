@@ -55,6 +55,12 @@ function computePagesUrl(repo) {
 function repoCard(repo, featuredSet) {
   const topics = (repo.topics || []).slice(0, 4);
   const pagesUrl = computePagesUrl(repo);
+
+  // Manual hosted-site overrides for projects that live off GitHub Pages.
+  const hostedOverride = {
+    clawcities: "https://clawcities.com/sites/owleggs",
+  };
+  const hostedUrl = hostedOverride[repo.name] || null;
   const isTemplate = !!repo.is_template;
   const isFeatured = featuredSet.has(repo.name);
 
@@ -73,7 +79,7 @@ function repoCard(repo, featuredSet) {
   // Prefer a screenshot of the *product/site* when we have one (Pages or homepage).
   // Use WordPress mShots (no key) for live website thumbnails.
   // Fallback: GitHub’s OpenGraph preview (repo card).
-  const siteUrlForShot = pagesUrl || repo.homepage || null;
+  const siteUrlForShot = hostedUrl || pagesUrl || repo.homepage || null;
   const mshot = (u) => `https://s.wordpress.com/mshots/v1/${encodeURIComponent(u)}?w=1200&h=630`;
   const ogUrl = `https://opengraph.githubassets.com/${encodeURIComponent(repo.pushed_at || "v1")}/${OWNER}/${repo.name}`;
   const thumbUrl = siteUrlForShot ? mshot(siteUrlForShot) : ogUrl;
@@ -89,13 +95,16 @@ function repoCard(repo, featuredSet) {
     .join(" ");
 
   // Make “Site/Homepage” the primary CTA when available.
-  const primaryCtaUrl = pagesUrl || repo.homepage || repo.html_url;
-  const primaryCtaLabel = pagesUrl ? "Visit site" : repo.homepage ? "Visit homepage" : "Open repo";
+  const primaryCtaUrl = hostedUrl || pagesUrl || repo.homepage || repo.html_url;
+  const primaryCtaLabel = hostedUrl || pagesUrl ? "Visit site" : repo.homepage ? "Visit homepage" : "Open repo";
 
   const actions = [
     `<a class="action primary" href="${primaryCtaUrl}" target="_blank" rel="noreferrer">${primaryCtaLabel}</a>`,
     primaryCtaUrl !== repo.html_url
       ? `<a class="action" href="${repo.html_url}" target="_blank" rel="noreferrer">Repo</a>`
+      : "",
+    hostedUrl && primaryCtaUrl !== hostedUrl
+      ? `<a class="action" href="${hostedUrl}" target="_blank" rel="noreferrer">Hosted</a>`
       : "",
   ].filter(Boolean).join("");
 
