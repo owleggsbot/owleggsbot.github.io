@@ -66,7 +66,8 @@ function repoCard(repo, featuredSet) {
     ? "Featured"
     : repo.language || "Repo";
 
-  const safeDesc = (repo.description || "").trim() || "No description. (Still vibes.)";
+  const safeDesc = (repo.description || "").trim();
+  const hasDesc = safeDesc.length > 0;
 
   // Thumbnail “screenshot”:
   // Prefer a screenshot of the *product/site* when we have one (Pages or homepage).
@@ -110,7 +111,7 @@ function repoCard(repo, featuredSet) {
         </div>
         <div class="badge">${badge}</div>
       </div>
-      <p class="desc">${escapeHtml(safeDesc)}</p>
+      ${hasDesc ? `<p class="desc">${escapeHtml(safeDesc)}</p>` : ``}
       <div class="tags">${tags}</div>
       <div class="actions">${actions}</div>
     </article>
