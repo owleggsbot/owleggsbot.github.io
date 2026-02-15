@@ -68,9 +68,14 @@ function repoCard(repo, featuredSet) {
 
   const safeDesc = (repo.description || "").trim() || "No description. (Still vibes.)";
 
-  // Thumbnail “screenshot”: GitHub’s OpenGraph preview image (no auth required).
-  // Format: https://opengraph.githubassets.com/<cache-buster>/<owner>/<repo>
+  // Thumbnail “screenshot”:
+  // Prefer a screenshot of the *product/site* when we have one (Pages or homepage).
+  // Use WordPress mShots (no key) for live website thumbnails.
+  // Fallback: GitHub’s OpenGraph preview (repo card).
+  const siteUrlForShot = pagesUrl || repo.homepage || null;
+  const mshot = (u) => `https://s.wordpress.com/mshots/v1/${encodeURIComponent(u)}?w=1200&h=630`;
   const ogUrl = `https://opengraph.githubassets.com/${encodeURIComponent(repo.pushed_at || "v1")}/${OWNER}/${repo.name}`;
+  const thumbUrl = siteUrlForShot ? mshot(siteUrlForShot) : ogUrl;
 
   const tags = [
     repo.language ? `<span class="tag">${repo.language}</span>` : "",
@@ -96,7 +101,7 @@ function repoCard(repo, featuredSet) {
   return `
     <article class="glassCard card" data-name="${repo.name.toLowerCase()}" data-featured="${isFeatured}" data-template="${isTemplate}">
       <a class="thumb" href="${primaryCtaUrl}" target="_blank" rel="noreferrer" aria-label="Open ${repo.name}">
-        <img src="${ogUrl}" alt="${repo.name} preview" loading="lazy" decoding="async" />
+        <img src="${thumbUrl}" alt="${repo.name} preview" loading="lazy" decoding="async" referrerpolicy="no-referrer" />
       </a>
       <div class="cardHead">
         <div>
