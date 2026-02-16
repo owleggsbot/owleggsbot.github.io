@@ -129,7 +129,23 @@ a:hover{opacity:.95}
   background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
 }
 
-.heroRight{display:grid; gap:14px; justify-items:stretch; align-content:start}
+.heroRight{display:grid; gap:14px; justify-items:stretch; align-content:start; position:relative}
+
+.mascot{
+  position:absolute;
+  top:-26px;
+  right:-10px;
+  width:min(520px, 62vw);
+  opacity:.32;
+  filter: blur(.2px) saturate(1.08) contrast(1.02);
+  mix-blend-mode: screen;
+  transform: translateZ(0);
+  pointer-events:none;
+  mask-image: radial-gradient(circle at 55% 40%, black 0 55%, transparent 78%);
+}
+@media (max-width: 920px){
+  .mascot{right:-40px; top:-20px; width:min(520px, 92vw); opacity:.22}
+}
 .glassCard{border-radius: var(--r); border:1px solid var(--stroke2);
   background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
   backdrop-filter: blur(16px) saturate(1.4);
@@ -200,6 +216,17 @@ a:hover{opacity:.95}
   pointer-events:none;
 }
 .card > *{position:relative}
+
+.card::after{
+  content:"";
+  position:absolute;
+  inset:-1px;
+  opacity:.0;
+  background: radial-gradient(220px 220px at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,.18), transparent 60%);
+  transition: opacity .25s var(--ease);
+  pointer-events:none;
+}
+.card:hover::after{opacity:1}
 
 .thumb{
   display:block;

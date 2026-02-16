@@ -26,6 +26,26 @@ year.textContent = new Date().getFullYear();
   items.forEach((el) => io.observe(el));
 })();
 
+// Premium hover glow that tracks cursor position on cards.
+(() => {
+  const prefersReduced = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+  if (prefersReduced) return;
+
+  document.addEventListener(
+    "pointermove",
+    (e) => {
+      const card = e.target?.closest?.(".card");
+      if (!card) return;
+      const r = card.getBoundingClientRect();
+      const x = ((e.clientX - r.left) / r.width) * 100;
+      const y = ((e.clientY - r.top) / r.height) * 100;
+      card.style.setProperty("--mx", `${x}%`);
+      card.style.setProperty("--my", `${y}%`);
+    },
+    { passive: true }
+  );
+})();
+
 function fmtNumber(n) {
   return Intl.NumberFormat(undefined, { notation: "compact" }).format(n ?? 0);
 }
