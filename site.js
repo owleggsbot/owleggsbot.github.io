@@ -210,14 +210,8 @@ async function loadProfile() {
 }
 
 async function loadRepos() {
-  // Prefer cached repos.json (fast + no rate limits). Fallback to live GitHub API.
-  let repos;
-  try {
-    repos = await fetchJson(`./repos.json?v=${Date.now()}`);
-  } catch {
-    repos = await fetchJson(`${API}/users/${OWNER}/repos?per_page=100&sort=pushed`);
-  }
-
+  // Live GitHub API fetch so new projects show up instantly without rebuilds.
+  const repos = await fetchJson(`${API}/users/${OWNER}/repos?per_page=100&sort=pushed`);
   allRepos = repos;
 
   const featuredNames = pickFeatured(allRepos);
