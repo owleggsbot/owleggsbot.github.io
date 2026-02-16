@@ -129,23 +129,7 @@ a:hover{opacity:.95}
   background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
 }
 
-.heroRight{display:grid; gap:14px; justify-items:stretch; align-content:start; position:relative}
-
-.mascot{
-  position:absolute;
-  top:-26px;
-  right:-10px;
-  width:min(520px, 62vw);
-  opacity:.32;
-  filter: blur(.2px) saturate(1.08) contrast(1.02);
-  mix-blend-mode: screen;
-  transform: translateZ(0);
-  pointer-events:none;
-  mask-image: radial-gradient(circle at 55% 40%, black 0 55%, transparent 78%);
-}
-@media (max-width: 920px){
-  .mascot{right:-40px; top:-20px; width:min(520px, 92vw); opacity:.22}
-}
+.heroRight{display:grid; gap:14px; justify-items:stretch; align-content:start}
 .glassCard{border-radius: var(--r); border:1px solid var(--stroke2);
   background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
   backdrop-filter: blur(16px) saturate(1.4);
@@ -251,7 +235,16 @@ a:hover{opacity:.95}
 .badge{padding:6px 10px; border-radius:999px; font-size:12px; border:1px solid var(--stroke2); background: rgba(0,0,0,.22); opacity:.9}
 .desc{margin:10px 0 12px; color:var(--muted); line-height:1.45; font-size:14px; min-height: 38px}
 .tags{display:flex; gap:8px; flex-wrap:wrap; margin-bottom: 12px}
-.tag{font-size:12px; padding:6px 10px; border:1px solid var(--stroke2); border-radius:999px; background: rgba(255,255,255,.03); opacity:.95}
+.tags .tag{backdrop-filter: blur(10px) saturate(1.2); -webkit-backdrop-filter: blur(10px) saturate(1.2)}
+.tag{
+  font-size:12px;
+  padding:6px 10px;
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:999px;
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+  color: color-mix(in oklab, var(--fg) 78%, transparent);
+  letter-spacing:.01em;
+}
 
 .actions{display:flex; gap:10px; flex-wrap:wrap}
 .action{padding: 10px 12px; border-radius: 14px; border:1px solid var(--stroke2); background: rgba(0,0,0,.18); font-weight:800; font-size:13px}
@@ -271,8 +264,19 @@ a:hover{opacity:.95}
 }
 @keyframes shimmer{to{background-position: -200% 0}}
 
+.aboutGrid{display:grid; grid-template-columns: .9fr 1.1fr; gap:14px; align-items:stretch}
 .cols{display:grid; grid-template-columns: repeat(3,1fr); gap:14px}
 .panel{padding:16px}
+
+.slothPanel{padding:14px; display:grid; place-items:center; overflow:hidden}
+.slothArt{
+  width:100%;
+  max-width: 520px;
+  height:auto;
+  border-radius: calc(var(--r) - 10px);
+  box-shadow: 0 26px 80px rgba(0,0,0,.55);
+  border:1px solid rgba(255,255,255,.10);
+}
 .panel h3{margin:0 0 8px; letter-spacing:-.01em}
 .panel p{margin:0; color:var(--muted); line-height:1.55}
 
@@ -287,6 +291,7 @@ a:hover{opacity:.95}
 @media (max-width: 920px){
   .hero{grid-template-columns: 1fr; padding-top: 34px}
   .gridCards{grid-template-columns: repeat(2,1fr)}
+  .aboutGrid{grid-template-columns: 1fr}
   .cols{grid-template-columns: 1fr}
   .sectionHead{flex-direction:column; align-items:flex-start}
 }

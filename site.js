@@ -121,7 +121,7 @@ function repoCard(repo, featuredSet) {
   const actions = [
     `<a class="action primary" href="${primaryCtaUrl}" target="_blank" rel="noreferrer">${primaryCtaLabel}</a>`,
     primaryCtaUrl !== repo.html_url
-      ? `<a class="action" href="${repo.html_url}" target="_blank" rel="noreferrer">Repo</a>`
+      ? `<a class="action" href="${repo.html_url}" target="_blank" rel="noreferrer">View Source</a>`
       : "",
     hostedUrl && primaryCtaUrl !== hostedUrl
       ? `<a class="action" href="${hostedUrl}" target="_blank" rel="noreferrer">Hosted</a>`
