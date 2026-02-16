@@ -234,15 +234,23 @@ a:hover{opacity:.95}
 .repoName{font-weight:800; letter-spacing:-.01em}
 .badge{padding:6px 10px; border-radius:999px; font-size:12px; border:1px solid var(--stroke2); background: rgba(0,0,0,.22); opacity:.9}
 .desc{margin:10px 0 12px; color:var(--muted); line-height:1.45; font-size:14px; min-height: 38px}
-.tags{display:flex; gap:8px; flex-wrap:wrap; margin-bottom: 12px}
+.desc.isMissing{opacity:.55; font-style:italic; min-height:auto}
+
+.tags{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  justify-content:flex-end; /* right align */
+  margin: 10px 0 12px;
+}
 .tags .tag{backdrop-filter: blur(10px) saturate(1.2); -webkit-backdrop-filter: blur(10px) saturate(1.2)}
 .tag{
-  font-size:12px;
-  padding:6px 10px;
+  font-size:11px; /* smaller */
+  padding:5px 9px;
   border:1px solid rgba(255,255,255,.10);
   border-radius:999px;
   background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-  color: color-mix(in oklab, var(--fg) 78%, transparent);
+  color: color-mix(in oklab, var(--fg) 76%, transparent);
   letter-spacing:.01em;
 }
 

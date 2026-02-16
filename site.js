@@ -74,13 +74,11 @@ function computePagesUrl(repo) {
 
 function repoCard(repo, featuredSet) {
   const topics = (repo.topics || []).slice(0, 4);
-  const pagesUrl = computePagesUrl(repo);
+  const pagesUrl = repo.pages_url || computePagesUrl(repo);
 
-  // Manual hosted-site overrides for projects that live off GitHub Pages.
-  const hostedOverride = {
-    clawcities: "https://clawcities.com/sites/owleggs",
-  };
-  const hostedUrl = hostedOverride[repo.name] || null;
+  // Hosted URL can be provided by cache (hosted_url / site_url) or computed from repo fields.
+  const hostedUrl = repo.hosted_url || null;
+  const siteUrlFromCache = repo.site_url || null;
   const isTemplate = !!repo.is_template;
   const isFeatured = featuredSet.has(repo.name);
 
@@ -94,12 +92,13 @@ function repoCard(repo, featuredSet) {
 
   const safeDesc = (repo.description || "").trim();
   const hasDesc = safeDesc.length > 0;
+  const needsDesc = !hasDesc;
 
   // Thumbnail “screenshot”:
   // Prefer a screenshot of the *product/site* when we have one (Pages or homepage).
   // Use WordPress mShots (no key) for live website thumbnails.
   // Fallback: GitHub’s OpenGraph preview (repo card).
-  const siteUrlForShot = hostedUrl || pagesUrl || repo.homepage || null;
+  const siteUrlForShot = siteUrlFromCache || hostedUrl || pagesUrl || repo.homepage || null;
   const mshot = (u) => `https://s.wordpress.com/mshots/v1/${encodeURIComponent(u)}?w=1200&h=630`;
   const ogUrl = `https://opengraph.githubassets.com/${encodeURIComponent(repo.pushed_at || "v1")}/${OWNER}/${repo.name}`;
   const thumbUrl = siteUrlForShot ? mshot(siteUrlForShot) : ogUrl;
@@ -111,12 +110,12 @@ function repoCard(repo, featuredSet) {
     ...topics.map((t) => `<span class="tag">${t}</span>`),
   ]
     .filter(Boolean)
-    .slice(0, 6)
+    .slice(0, 5)
     .join(" ");
 
   // Make “Site/Homepage” the primary CTA when available.
-  const primaryCtaUrl = hostedUrl || pagesUrl || repo.homepage || repo.html_url;
-  const primaryCtaLabel = hostedUrl || pagesUrl ? "Visit site" : repo.homepage ? "Visit homepage" : "Open repo";
+  const primaryCtaUrl = siteUrlFromCache || hostedUrl || pagesUrl || repo.homepage || repo.html_url;
+  const primaryCtaLabel = siteUrlFromCache || hostedUrl || pagesUrl ? "Visit site" : repo.homepage ? "Visit homepage" : "Open repo";
 
   const actions = [
     `<a class="action primary" href="${primaryCtaUrl}" target="_blank" rel="noreferrer">${primaryCtaLabel}</a>`,
@@ -140,7 +139,7 @@ function repoCard(repo, featuredSet) {
         </div>
         <div class="badge">${badge}</div>
       </div>
-      ${hasDesc ? `<p class="desc">${escapeHtml(safeDesc)}</p>` : ``}
+      ${hasDesc ? `<p class="desc">${escapeHtml(safeDesc)}</p>` : `<p class="desc isMissing">Add a repo description for a better card.</p>`}
       <div class="tags">${tags}</div>
       <div class="actions">${actions}</div>
     </article>
@@ -230,9 +229,16 @@ async function loadProfile() {
 }
 
 async function loadRepos() {
-  // Live GitHub API fetch so new projects show up instantly without rebuilds.
-  const repos = await fetchJson(`${API}/users/${OWNER}/repos?per_page=100&sort=pushed`);
-  allRepos = repos;
+  // Prefer cached repos.json to avoid exhausting GitHub API rate limits.
+  // Fallback to live GitHub API if the cache is missing.
+  let payload;
+  try {
+    payload = await fetchJson(`./repos.json?v=${Date.now()}`);
+    allRepos = payload.repos || [];
+  } catch {
+    const repos = await fetchJson(`${API}/users/${OWNER}/repos?per_page=100&sort=pushed`);
+    allRepos = repos;
+  }
 
   const featuredNames = pickFeatured(allRepos);
   const featuredSet = new Set(featuredNames);
