@@ -210,9 +210,14 @@ async function loadProfile() {
 }
 
 async function loadRepos() {
-  // Public list, sorted by recently pushed
-  const repos = await fetchJson(`${API}/users/${OWNER}/repos?per_page=100&sort=pushed`);
-  // Enable topics (requires preview header historically, but most clients now get it)
+  // Prefer cached repos.json (fast + no rate limits). Fallback to live GitHub API.
+  let repos;
+  try {
+    repos = await fetchJson(`./repos.json?v=${Date.now()}`);
+  } catch {
+    repos = await fetchJson(`${API}/users/${OWNER}/repos?per_page=100&sort=pushed`);
+  }
+
   allRepos = repos;
 
   const featuredNames = pickFeatured(allRepos);
