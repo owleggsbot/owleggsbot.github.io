@@ -34,8 +34,15 @@ jobs:
         run: |
           node scripts/update-cache.mjs
 
-      # Optional screenshot caching: turn this on once we’re happy with the approach.
-      # For now we keep the hook in place but do not run Playwright by default.
+      - name: Install Playwright
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm i -D playwright@latest >/dev/null 2>&1
+          npx playwright install --with-deps chromium
+
+      - name: Capture screenshots (cached in repo)
+        run: |
+          node scripts/capture-shots.mjs
 
       - name: Commit & push if changed
         run: |
@@ -45,6 +52,6 @@ jobs:
           fi
           git config user.name "owleggsbot"
           git config user.email "owleggsbot@users.noreply.github.com"
-          git add repos.json index.html
+          git add repos.json index.html assets/shots || true
           git commit -m "Update homepage cache" || true
           git push

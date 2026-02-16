@@ -101,7 +101,8 @@ function repoCard(repo, featuredSet) {
   const siteUrlForShot = siteUrlFromCache || hostedUrl || pagesUrl || repo.homepage || null;
   const mshot = (u) => `https://s.wordpress.com/mshots/v1/${encodeURIComponent(u)}?w=1200&h=630`;
   const ogUrl = `https://opengraph.githubassets.com/${encodeURIComponent(repo.pushed_at || "v1")}/${OWNER}/${repo.name}`;
-  const thumbUrl = siteUrlForShot ? mshot(siteUrlForShot) : ogUrl;
+  const localShot = repo.screenshot_path ? `./${repo.screenshot_path}` : null;
+  const thumbUrl = localShot || (siteUrlForShot ? mshot(siteUrlForShot) : ogUrl);
 
   const tags = [
     repo.language ? `<span class="tag">${repo.language}</span>` : "",
