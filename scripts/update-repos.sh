@@ -13,7 +13,7 @@ gh api "users/${OWNER}/repos?per_page=100&sort=pushed" > repos.json
 
 # Bump asset version to force cache refresh when repo list changes.
 STAMP="$(date -u +%Y%m%d%H%M%S)"
-perl -0777 -i -pe "s/(styles\.css\?v=)\d+/$1${STAMP}/g; s/(site\.js\?v=)\d+/$1${STAMP}/g" index.html
+perl -0777 -i -pe 's/(styles\.css\?v=)\d+/${1}'"${STAMP}"'/g; s/(site\.js\?v=)\d+/${1}'"${STAMP}"'/g' index.html
 
 if git diff --quiet; then
   echo "No changes."
