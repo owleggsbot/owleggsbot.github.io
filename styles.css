@@ -264,17 +264,23 @@ a:hover{opacity:.95}
 }
 @keyframes shimmer{to{background-position: -200% 0}}
 
-.aboutGrid{display:grid; grid-template-columns: .9fr 1.1fr; gap:14px; align-items:stretch}
+.aboutGrid{display:grid; grid-template-columns: .55fr 1.45fr; gap:14px; align-items:start}
 .cols{display:grid; grid-template-columns: repeat(3,1fr); gap:14px}
 .panel{padding:16px}
 
-.slothPanel{padding:14px; display:grid; place-items:center; overflow:hidden}
+.slothPanel{
+  padding:12px;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+  align-self:start;
+}
 .slothArt{
   width:100%;
-  max-width: 520px;
+  max-width: 300px; /* keep it tasteful */
   height:auto;
   border-radius: calc(var(--r) - 10px);
-  box-shadow: 0 26px 80px rgba(0,0,0,.55);
+  box-shadow: 0 22px 60px rgba(0,0,0,.45);
   border:1px solid rgba(255,255,255,.10);
 }
 .panel h3{margin:0 0 8px; letter-spacing:-.01em}
@@ -292,6 +298,7 @@ a:hover{opacity:.95}
   .hero{grid-template-columns: 1fr; padding-top: 34px}
   .gridCards{grid-template-columns: repeat(2,1fr)}
   .aboutGrid{grid-template-columns: 1fr}
+  .slothArt{max-width: 240px}
   .cols{grid-template-columns: 1fr}
   .sectionHead{flex-direction:column; align-items:flex-start}
 }
